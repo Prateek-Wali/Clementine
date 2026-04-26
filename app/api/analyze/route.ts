@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getNearbyTriggerLocations } from "@/lib/geo";
 import { analyzeRisk } from "@/lib/claude";
 import { sendSMS } from "@/lib/vonage";
+import { AnalysisResult } from "@/lib/types";
 
 export async function POST(req: Request) {
   const { heartRate, baseline, lat, lng } = await req.json();
