@@ -1,7 +1,7 @@
-"use client";
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { Link } from 'react-router-dom';
+import RespiratorySystem from './RespiratorySystem';
 import './DashboardScreen.css';
 
 const POLL_INTERVAL_MS = 5_000;
@@ -197,8 +197,8 @@ const DashboardScreen: React.FC = () => {
             {/* Top Navigation */}
             <nav className="dash-nav">
                 <div className="nav-left">
-                    <Link href="/dashboard">DASHBOARD</Link>
-                    <Link href="#">PROFILE</Link>
+                    <Link to="/dashboard">DASHBOARD</Link>
+                    <Link to="#">PROFILE</Link>
                 </div>
                 <div className="nav-center">
                     <h1>Clementine</h1>
@@ -279,7 +279,7 @@ const DashboardScreen: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: "easeOut", delay: 0.3 }}
                 >
-                    {/* <RespiratorySystem heartRate={displayHeartRate} /> */}
+                    <RespiratorySystem heartRate={displayHeartRate} />
                     <span className="placeholder-text">RESPIRATORY SYSTEM</span>
                 </motion.div>
 
