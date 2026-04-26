@@ -15,6 +15,7 @@ const DashboardScreen: React.FC = () => {
     const displayHrRef = useRef<number>(72);
     const simulationIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
     const fitbitIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const fitbitResumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Keep ref in sync so intervals/timeouts always read latest value
     useEffect(() => {
@@ -34,12 +35,21 @@ const DashboardScreen: React.FC = () => {
         whileTap: { scale: 0.88, y: 3, transition: { type: "spring" as const, stiffness: 600, damping: 20 } }
     };
 
-    // ─── SIMULATION ENGINE ────────────────────────────────────────────
-    useEffect(() => {
+    // ─── BACKGROUND LOOP HELPERS ──────────────────────────────────────
+    const stopSimulation = useCallback(() => {
         if (simulationIntervalRef.current) {
             clearInterval(simulationIntervalRef.current);
+            simulationIntervalRef.current = null;
         }
+    }, []);
+
+    const startSimulation = useCallback(() => {
+        if (simulationIntervalRef.current) return;
         simulationIntervalRef.current = setInterval(() => {
+            if (crisisRef.current) {
+                console.warn('[crisis] simulation tick fired during crisis — should be impossible');
+                return;
+            }
             if (!isSimulatingRef.current) return;
 
             const drift = Math.random() * 3 - 1.5;
@@ -49,53 +59,73 @@ const DashboardScreen: React.FC = () => {
             simulatedHRRef.current = next;
             setDisplayHeartRate(Math.round(next));
         }, 2000);
-
-        return () => {
-            if (simulationIntervalRef.current) {
-                clearInterval(simulationIntervalRef.current);
-                simulationIntervalRef.current = null;
-            }
-        };
     }, []);
 
-    // ─── REAL DATA FETCH ──────────────────────────────────────────────
-    useEffect(() => {
+    const stopFitbit = useCallback(() => {
+        if (fitbitIntervalRef.current) {
+            clearInterval(fitbitIntervalRef.current);
+            fitbitIntervalRef.current = null;
+        }
+        if (fitbitResumeTimeoutRef.current) {
+            clearTimeout(fitbitResumeTimeoutRef.current);
+            fitbitResumeTimeoutRef.current = null;
+        }
+    }, []);
+
+    const startFitbit = useCallback(() => {
+        if (fitbitIntervalRef.current) return;
         const fetchHeartRate = async () => {
             try {
                 const res = await fetch('http://localhost:3001/fitbit/heartrate');
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 const bpm = data?.heartRate ?? data?.bpm ?? data?.value;
-                if (typeof bpm === 'number') {
-                    console.log(`Real Fitbit data received: ${bpm} BPM`);
-                    simulatedHRRef.current = bpm;
-                    isSimulatingRef.current = false;
-                    setDisplayHeartRate(bpm);
-                    setTimeout(() => { isSimulatingRef.current = true; }, 3000);
+                if (typeof bpm !== 'number') return;
+                if (crisisRef.current) return;
+                console.log(`Real Fitbit data received: ${bpm} BPM`);
+                simulatedHRRef.current = bpm;
+                isSimulatingRef.current = false;
+                setDisplayHeartRate(bpm);
+                if (fitbitResumeTimeoutRef.current) {
+                    clearTimeout(fitbitResumeTimeoutRef.current);
                 }
+                fitbitResumeTimeoutRef.current = setTimeout(() => {
+                    fitbitResumeTimeoutRef.current = null;
+                    if (crisisRef.current) return;
+                    isSimulatingRef.current = true;
+                }, 3000);
             } catch {
                 console.log('Fitbit fetch failed, continuing simulation');
             }
         };
-
         fetchHeartRate();
-        if (fitbitIntervalRef.current) {
-            clearInterval(fitbitIntervalRef.current);
-        }
         fitbitIntervalRef.current = setInterval(fetchHeartRate, POLL_INTERVAL_MS);
-        return () => {
-            if (fitbitIntervalRef.current) {
-                clearInterval(fitbitIntervalRef.current);
-                fitbitIntervalRef.current = null;
-            }
-        };
     }, []);
+
+    // ─── SIMULATION ENGINE ────────────────────────────────────────────
+    useEffect(() => {
+        startSimulation();
+        return stopSimulation;
+    }, [startSimulation, stopSimulation]);
+
+    // ─── REAL DATA FETCH ──────────────────────────────────────────────
+    useEffect(() => {
+        startFitbit();
+        return stopFitbit;
+    }, [startFitbit, stopFitbit]);
 
     // ─── CRISIS SIMULATION (spacebar) ─────────────────────────────────
     const triggerCrisis = useCallback(() => {
         if (crisisRef.current) return; // already running
         crisisRef.current = true;
         isSimulatingRef.current = false;
+
+        // Cancel any pending Fitbit-triggered resume so it can't flip
+        // isSimulatingRef back to true mid ramp-up.
+        if (fitbitResumeTimeoutRef.current) {
+            clearTimeout(fitbitResumeTimeoutRef.current);
+            fitbitResumeTimeoutRef.current = null;
+        }
 
         const startBpm = displayHrRef.current;
         const peakBpm = 118;
