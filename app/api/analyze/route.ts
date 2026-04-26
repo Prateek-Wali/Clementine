@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 
   // Step 1: quick risk check, no API calls
   const percentAbove = ((heartRate - baseline) / baseline) * 100;
-  if (percentAbove < 35) {
+  if (percentAbove < 20) {
     return NextResponse.json({
       risk: "low",
       userMessage: "Your vitals look normal. Keep it up.",
@@ -48,6 +48,6 @@ export async function POST(req: Request) {
     risk: analysis.risk,
     userMessage: analysis.userMessage,
     sponsorMessage: analysis.sponsorMessage,
-    context, 
+    context,
   });
 }
