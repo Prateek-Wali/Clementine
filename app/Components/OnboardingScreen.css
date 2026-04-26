@@ -1,0 +1,268 @@
+.onboarding-screen {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to bottom, #0a0a0a 0%, #0a0a0a 15%, #c2185b 66%, #c2185b 100%);
+    color: #FFFFFF;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Navbar */
+.onboarding-nav {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 40px;
+}
+
+.onboarding-nav h1 {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0;
+    color: #FFFFFF;
+}
+
+/* Step Indicator */
+.step-indicator {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 60px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    z-index: 1;
+}
+
+.step-line {
+    position: absolute;
+    top: 5px;
+    /* Centers with the 10px high inactive pills */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 170px;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+}
+
+.step-line-short {
+    position: absolute;
+    top: 5px;
+    /* Centers with the 10px high inactive pills */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    /* Shorter for 2 steps */
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.2);
+    z-index: -1;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.step-pill {
+    width: 24px;
+    height: 10px;
+    border-radius: 5px;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    background-color: #0a0a0a;
+    transition: all 0.3s ease;
+}
+
+.step-pill.active-pill {
+    width: 32px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+    border-color: #FFFFFF;
+}
+
+.step-pill.completed-pill {
+    width: 32px;
+    height: 12px;
+    border-radius: 6px;
+    background-color: #C2185B;
+    border-color: #C2185B;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.step-label {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.4);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+.step-label.active-label {
+    color: #FFFFFF;
+}
+
+/* Main Content */
+.onboarding-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 0 20px 60px;
+}
+
+.onboarding-content {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.category-tag {
+    font-size: 13px;
+    font-weight: 800;
+    color: #F8BBD9;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.main-heading {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    text-align: center;
+}
+
+.sub-heading {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 400;
+    margin: 0 0 48px 0;
+    text-align: center;
+}
+
+/* Form */
+.onboarding-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.form-group input {
+    background-color: rgba(28, 28, 46, 0.8);
+    border: 1px solid rgba(194, 24, 91, 0.6);
+    border-radius: 14px;
+    padding: 16px 20px;
+    font-size: 16px;
+    color: #FFFFFF;
+    outline: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.form-group input:focus {
+    border-color: #C2185B;
+    box-shadow: 0 0 0 2px rgba(194, 24, 91, 0.2), 0 0 15px rgba(194, 24, 91, 0.3);
+}
+
+.form-group input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.6;
+    cursor: pointer;
+}
+
+.toggle-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.toggle-btn {
+    background-color: rgba(28, 28, 46, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 999px;
+    padding: 16px 20px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn.selected {
+    background-color: #C2185B;
+    border-color: #C2185B;
+    color: #FFFFFF;
+    box-shadow: 0 0 15px rgba(194, 24, 91, 0.4);
+}
+
+.continue-btn {
+    margin-top: 24px;
+    background-color: #C2185B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 999px;
+    padding: 18px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+}
+
+.button-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.back-btn {
+    flex: 1;
+    background-color: transparent;
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 999px;
+    padding: 18px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.let-go-btn {
+    flex: 2;
+    /* takes up more width than back button */
+    margin-top: 0;
+    /* Override .continue-btn margin-top */
+}
