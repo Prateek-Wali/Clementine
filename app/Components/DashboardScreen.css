@@ -308,11 +308,20 @@
     margin-top: 16px;
 }
 
+.location-card-risk {
+    background-color: rgba(48, 38, 10, 0.85);
+    border-color: rgba(255, 193, 7, 0.45);
+}
+
 .location-pin {
     width: 24px;
     height: 24px;
     color: #4CAF50;
     flex-shrink: 0;
+}
+
+.location-card-risk .location-pin {
+    color: #FFC107;
 }
 
 .location-info {

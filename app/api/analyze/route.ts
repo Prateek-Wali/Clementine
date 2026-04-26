@@ -35,7 +35,10 @@ export async function POST(req: Request) {
   //Step 4: claude reasons about everything and returns structured response
   const analysis = await analyzeRisk(context);
   
-
+    console.log("analysis:", analysis);
+    console.log("riskLevel:", analysis.riskLevel);
+    console.log("SPONSOR_PHONE_NUMBER:", process.env.SPONSOR_PHONE_NUMBER);
+    console.log("sponsorMessage:", analysis.sponsorMessage);
   // Step 5: if high risk, send WhatsApp via Vonage sandbox
   if (analysis.riskLevel === "high" || analysis.riskLevel === "critical") {
     try {

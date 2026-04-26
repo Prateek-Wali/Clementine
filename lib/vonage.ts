@@ -21,5 +21,6 @@ export async function sendSMS(to: string, message: string) {
   });
 
   const data = await response.json();
+  console.log("Vonage response:", JSON.stringify(data));
   return data;
 }

@@ -5,6 +5,8 @@ import RespiratorySystem from './RespiratorySystem';
 import './DashboardScreen.css';
 
 const DashboardScreen: React.FC = () => {
+    const [alertMessage, setAlertMessage] = useState("");
+
     const [displayHeartRate, setDisplayHeartRate] = useState<number | null>(null);
     const baseHRRef = useRef<number>(0);
     const currentHRRef = useRef<number>(0);
@@ -12,6 +14,7 @@ const DashboardScreen: React.FC = () => {
     const crisisActiveRef = useRef<boolean>(false);
     const simIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    isReadyRef.current = true;
 
     // Derived values from displayHeartRate
     const safeHeartRate = displayHeartRate ?? 0;
@@ -41,6 +44,9 @@ const DashboardScreen: React.FC = () => {
                 setDisplayHeartRate(data.heartRate);
             } catch {
                 console.log('Fitbit fetch failed');
+                baseHRRef.current = 70;
+                currentHRRef.current = 70;
+                isReadyRef.current = true;
             }
         };
 
@@ -51,7 +57,7 @@ const DashboardScreen: React.FC = () => {
         simIntervalRef.current = setInterval(() => {
             if (!isReadyRef.current) return;
             if (crisisActiveRef.current) return;
-
+            
             const change = Math.random() < 0.5 ? -1 : 1;
             const next = currentHRRef.current + change;
 
@@ -76,7 +82,22 @@ const DashboardScreen: React.FC = () => {
             if (!isReadyRef.current) return;
             if (crisisActiveRef.current) return;
 
+            console.log("SPACEBAR HIT — triggering analyze"); 
             crisisActiveRef.current = true;
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+            const res = await fetch("http://localhost:3000/api/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                heartRate: 118,
+                baseline: baseHRRef.current,
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                }),
+            });
+            const result = await res.json();
+            setAlertMessage(result.userMessage);
+            });
 
             const startHR = currentHRRef.current;
             const targetHR = 118;
@@ -294,6 +315,16 @@ const DashboardScreen: React.FC = () => {
                 </motion.div>
 
             </div>
+            {/* Alert Overlay */}
+            {alertMessage && (
+                <div style={{
+                    position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)',
+                    background: '#C2185B', color: 'white', padding: '16px 24px', borderRadius: 8,
+                    maxWidth: 400, textAlign: 'center', zIndex: 999
+                }}>
+                    {alertMessage}
+                </div>
+            )}
         </div>
     );
 };
