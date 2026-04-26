@@ -1,0 +1,179 @@
+.about-screen {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    /* Same background gradient as landing page */
+    background: linear-gradient(to bottom, #0a0a0a 0%, #0a0a0a 15%, #c2185b 66%, #c2185b 100%);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.about-nav {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    box-sizing: border-box;
+}
+
+.about-nav .nav-left,
+.about-nav .nav-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 24px;
+}
+
+.nav-links a {
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.about-nav .nav-right {
+    justify-content: flex-end;
+}
+
+.about-nav .nav-center {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.about-nav h1 {
+    margin: 0;
+    color: #FFFFFF;
+    font-size: 64px;
+    font-weight: 900;
+    font-family: 'Barlow Condensed', sans-serif;
+    letter-spacing: 1px;
+    filter: drop-shadow(0px 2px 5px rgba(0, 0, 0, 0.7));
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 800;
+    border: 2px solid #FFFFFF;
+    border-radius: 999px;
+    /* Pill shape */
+    padding: 8px 16px;
+    cursor: pointer;
+    font-family: 'Nunito', 'Quicksand', sans-serif;
+    transition: transform 0.2s, background 0.2s, color 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.back-btn:hover {
+    background: #FFFFFF;
+    color: #0a0a0a;
+    transform: translateY(-2px);
+}
+
+.back-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.about-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 80px 24px 120px 24px;
+    /* 80px below navbar, generous bottom padding */
+}
+
+.essay-container {
+    width: 100%;
+    max-width: 680px;
+    /* Max width of around 680px */
+}
+
+.essay-header {
+    text-align: center;
+    margin-bottom: 64px;
+}
+
+.essay-header .category-tag {
+    font-family: 'Nunito', 'Comic Sans MS', 'Quicksand', sans-serif;
+    color: #F8BBD9;
+    font-size: 14px;
+    font-weight: 800;
+    display: block;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.essay-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    color: #FFFFFF;
+    font-size: 56px;
+    /* Large, bold, centered */
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.essay-section {
+    margin-top: 48px;
+    /* 48px of top margin above each section */
+}
+
+.essay-section h3 {
+    font-family: 'Barlow Condensed', sans-serif;
+    color: #FFFFFF;
+    font-size: 32px;
+    /* Slightly larger than body text */
+    font-weight: 800;
+    margin: 0 0 16px 0;
+    text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.5);
+    /* shadow for legibility */
+}
+
+.essay-section p {
+    color: rgba(255, 255, 255, 0.75);
+    /* White at 75% opacity */
+    font-size: 18px;
+    /* Readable body size */
+    line-height: 1.8;
+    /* Generous line height */
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+    /* subtle shadow for brighter background areas */
+}
+
+.essay-footer {
+    text-align: center;
+    margin-top: 80px;
+    color: rgba(255, 255, 255, 0.4);
+    /* soft opacity */
+    font-size: 13px;
+    /* very small */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+}
