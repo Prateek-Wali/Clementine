@@ -2,17 +2,17 @@ import Anthropic from '@anthropic-ai/sdk';
 
 // 1. Initialize the client using the API key from your .env file
 const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY, 
+  apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 // 2. Export the main function with the updated parameters
 export async function analyzeRisk(context: any) {
   // 3. Create the Prompt
   // We feed Claude the user's current physical state, baseline, and environment
-  
+
   // Safely extract the nearest location from the context
-  const nearestTrigger = context.nearAlcohol && context.nearbyPlaces.length > 0 
-    ? context.nearbyPlaces[0] 
+  const nearestTrigger = context.nearAlcohol && context.nearbyPlaces.length > 0
+    ? context.nearbyPlaces[0]
     : { name: "Unknown", distanceMeters: 0 };
 
   const prompt = `You are the AI brain for Clementine, a relapse prevention app.
@@ -39,7 +39,7 @@ Return ONLY valid JSON in this exact format, with no markdown formatting or extr
   try {
     // 4. Call the Claude API
     const msg = await anthropic.messages.create({
-      model: "claude-4-5-haiku-20260326",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens: 500,
       temperature: 0.7,
       system: "You output strict JSON.",
@@ -49,13 +49,13 @@ Return ONLY valid JSON in this exact format, with no markdown formatting or extr
     // 5. Parse and Return the JSON
     const responseText = msg.content[0].type === 'text' ? msg.content[0].text : '{}';
     return JSON.parse(responseText);
-    
+
   } catch (error) {
     // 6. Error Handling
     // Return a safe fallback JSON object that matches the expected schema
     console.error("Error calling Claude:", error);
     return {
-      riskLevel: "medium",
+      riskLevel: "high",
       sponsorMessage: "Hey Mike, John's biometric system flagged an event near a trigger location. Might be worth checking in with him.",
       userMessage: "Take a deep breath and step away from your current location. Reach out to your sponsor if you need immediate support."
     };

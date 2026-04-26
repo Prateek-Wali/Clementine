@@ -3,6 +3,7 @@ import { getNearbyTriggerLocations } from "@/lib/geo";
 import { analyzeRisk } from "@/lib/claude";
 import { sendSMS } from "@/lib/vonage";
 
+
 export async function POST(req: Request) {
   const { heartRate, baseline, lat, lng } = await req.json();
 
@@ -35,17 +36,22 @@ export async function POST(req: Request) {
   //Step 4: claude reasons about everything and returns structured response
   const analysis = await analyzeRisk(context);
 
-  // Step 5: if high risk, send SMS via Vonage
-  if (analysis.risk === "high" || analysis.risk === "critical") {
-    await sendSMS(
-      process.env.SPONSOR_PHONE!,
-      analysis.sponsorMessage
-    );
+  // Step 5: if high risk, send WhatsApp via Vonage sandbox
+  if (analysis.riskLevel === "high" || analysis.riskLevel === "critical") {
+    try {
+      const smsResponse = await sendSMS(
+        process.env.SPONSOR_PHONE_NUMBER!, // set in .env
+        analysis.sponsorMessage
+      );
+      console.log("Vonage WhatsApp sent:", smsResponse);
+    } catch (error) {
+      console.error("Failed to send WhatsApp:", error);
+    }
   }
 
   // Step 6: send results back to frontend
   return NextResponse.json({
-    risk: analysis.risk,
+    risk: analysis.riskLevel,
     userMessage: analysis.userMessage,
     sponsorMessage: analysis.sponsorMessage,
     context,

@@ -1,18 +1,23 @@
-const API_KEY = process.env.VONAGE_API_KEY; // GET THIS FROM VONAGE DASHBOARD
-const API_SECRET = process.env.VONAGE_API_SECRET; // GET THIS FROM VONAGE DASHBOARD
-
 export async function sendSMS(to: string, message: string) {
+  const API_KEY = process.env.VONAGE_API_KEY;
+  const API_SECRET = process.env.VONAGE_API_SECRET;
 
-  const response = await fetch('https://rest.nexmo.com/sms/json', {
+  // Vonage WhatsApp Sandbox — bypasses US carrier A2P restrictions
+  const credentials = Buffer.from(`${API_KEY}:${API_SECRET}`).toString('base64');
+
+  const response = await fetch('https://messages-sandbox.nexmo.com/v1/messages', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Basic ${credentials}`,
+    },
     body: JSON.stringify({
-      api_key: API_KEY,
-      api_secret: API_SECRET,
-      to: to.replace('+', ''),
-      from: '18165972207', //sender number from vonage
-      text: message
-    })
+      message_type: 'text',
+      text: message,
+      to: to.replace(/\D/g, ''),         // strip non-digits
+      from: '14157386102',               // Vonage sandbox WhatsApp number
+      channel: 'whatsapp',
+    }),
   });
 
   const data = await response.json();
