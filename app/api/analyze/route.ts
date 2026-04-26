@@ -1,30 +1,53 @@
-//Combines all data and 
-
 import { NextResponse } from "next/server";
-import { isElevated } from "@/lib/risk";
 import { getNearbyTriggerLocations } from "@/lib/geo";
+import { analyzeRisk } from "@/lib/claude";
+import { sendSMS } from "@/lib/vonage";
 
 export async function POST(req: Request) {
-
   const { heartRate, baseline, lat, lng } = await req.json();
 
-  const elevated = isElevated(heartRate, baseline);
-
-  if (!elevated) {
-    return NextResponse.json({ risk: "low", userMessage: "You're doing great." });
+  // Step 1: quick risk check, no API calls
+  const percentAbove = ((heartRate - baseline) / baseline) * 100;
+  if (percentAbove < 35) {
+    return NextResponse.json({
+      risk: "low",
+      userMessage: "Your vitals look normal. Keep it up.",
+      sponsorMessage: null,
+    });
   }
 
-  // Only call Google Places if stressed
-  const triggers = await getNearbyTriggerLocations(lat, lng);
-  const nearBar = triggers.length > 0;
+  // Step 2:elevated, now check location
+  const nearbyPlaces = await getNearbyTriggerLocations(lat, lng, 200);
 
-  if (!nearBar) {
-    return NextResponse.json({ risk: "low", userMessage: "Stress detected but you're in a safe area." });
+  // Step 3: build context object for Claude
+  const context = {
+    heartRate,
+    baseline,
+    percentAboveBaseline: Math.round(percentAbove),
+    nearbyPlaces: nearbyPlaces.map(p => ({
+      name: p.name,
+      distanceMeters: p.distanceMeters,
+    })),
+    nearAlcohol: nearbyPlaces.length > 0,
+    timestamp: new Date().toISOString(),
+  };
+
+  //Step 4: claude reasons about everything and returns structured response
+  const analysis = await analyzeRisk(context);
+
+  // Step 5: if high risk, send SMS via Vonage
+  if (analysis.risk === "high" || analysis.risk === "critical") {
+    await sendSMS(
+      process.env.SPONSOR_PHONE!,
+      analysis.sponsorMessage
+    );
   }
 
+  // Step 6: send results back to frontend
   return NextResponse.json({
-    risk: "high",
-    userMessage: `You're ${triggers[0].distanceMeters} meters away from ${triggers[0].name}. Your stress is elevated. Consider calling your sponsor.`,
-    nearestBar: triggers[0].name,
+    risk: analysis.risk,
+    userMessage: analysis.userMessage,
+    sponsorMessage: analysis.sponsorMessage,
+    context, 
   });
 }
