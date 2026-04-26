@@ -3,7 +3,6 @@ import { getNearbyTriggerLocations } from "@/lib/geo";
 import { analyzeRisk } from "@/lib/claude";
 import { sendSMS } from "@/lib/vonage";
 
-
 export async function POST(req: Request) {
   const { heartRate, baseline, lat, lng } = await req.json();
 
@@ -29,12 +28,12 @@ export async function POST(req: Request) {
       name: p.name,
       distanceMeters: p.distanceMeters,
     })),
-    nearAlcohol: nearbyPlaces.length > 0,
     timestamp: new Date().toISOString(),
   };
 
   //Step 4: claude reasons about everything and returns structured response
   const analysis = await analyzeRisk(context);
+  
 
   // Step 5: if high risk, send WhatsApp via Vonage sandbox
   if (analysis.riskLevel === "high" || analysis.riskLevel === "critical") {
