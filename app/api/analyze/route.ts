@@ -3,12 +3,14 @@ import { getNearbyTriggerLocations } from "@/lib/geo";
 import { analyzeRisk } from "@/lib/claude";
 import { sendSMS } from "@/lib/vonage";
 
+//possible include hrv later on 
+//heart rate spikes around 30 seconds to 1 minute
 export async function POST(req: Request) {
   const { heartRate, baseline, lat, lng } = await req.json();
 
   // Step 1: quick risk check, no API calls
   const percentAbove = ((heartRate - baseline) / baseline) * 100;
-  if (percentAbove < 35) {
+  if (percentAbove < 20) {
     return NextResponse.json({
       risk: "low",
       userMessage: "Your vitals look normal. Keep it up.",
@@ -28,13 +30,14 @@ export async function POST(req: Request) {
       name: p.name,
       distanceMeters: p.distanceMeters,
     })),
-    nearAlcohol: nearbyPlaces.length > 0,
     timestamp: new Date().toISOString(),
   };
 
   //Step 4: claude reasons about everything and returns structured response
   const analysis = await analyzeRisk(context);
+  
 
+  console.log("Claude response:", analysis); 
   // Step 5: if high risk, send SMS via Vonage
   if (analysis.risk === "high" || analysis.risk === "critical") {
     await sendSMS(
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
 
   // Step 6: send results back to frontend
   return NextResponse.json({
-    risk: analysis.risk,
+    risk: analysis.riskLevel,
     userMessage: analysis.userMessage,
     sponsorMessage: analysis.sponsorMessage,
     context, 

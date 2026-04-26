@@ -14,19 +14,15 @@ export interface BiometricData {
 export interface RiskResult {
   elevated: boolean;
   percentAboveBaseline: number;
-  reason: string;
 }
 
 export function assessRisk(data: BiometricData): RiskResult {
   const { heartRate, baseline } = data;
   const percentAbove = ((heartRate - baseline) / baseline) * 100;
-  const elevated = percentAbove >= 35; // 20% above baseline = stressed
+  const elevated = percentAbove >= 35; // 35% above baseline = stressed
 
   return {
     elevated,
     percentAboveBaseline: Math.round(percentAbove),
-    reason: elevated
-      ? `Heart rate is ${Math.round(percentAbove)}% above baseline (${heartRate} vs ${baseline} bpm)`
-      : `Heart rate is within normal range`,
   };
 }
