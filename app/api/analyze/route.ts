@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       name: p.name,
       distanceMeters: p.distanceMeters,
     })),
+    nearAlcohol: nearbyPlaces.length > 0,
     timestamp: new Date().toISOString(),
   };
 
