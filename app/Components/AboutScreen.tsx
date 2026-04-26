@@ -1,12 +1,10 @@
-"use client";
 import React from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './AboutScreen.css';
 
 const AboutScreen: React.FC = () => {
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const buttonAnim = {
         whileHover: { scale: 1.06, transition: { type: "spring" as const, stiffness: 400, damping: 15 } },
@@ -18,7 +16,7 @@ const AboutScreen: React.FC = () => {
             {/* Top Navigation */}
             <nav className="about-nav">
                 <div className="nav-left">
-                    <motion.button className="back-btn" onClick={() => router.push('/')} {...buttonAnim}>
+                    <motion.button className="back-btn" onClick={() => navigate('/')} {...buttonAnim}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="back-icon">
                             <path d="M19 12H5M12 19l-7-7 7-7" />
                         </svg>
@@ -26,10 +24,10 @@ const AboutScreen: React.FC = () => {
                     </motion.button>
                     <div className="nav-links">
                         <motion.div {...buttonAnim}>
-                            <Link href="/" style={{ display: 'block' }}>Home</Link>
+                            <Link to="/" style={{ display: 'block' }}>Home</Link>
                         </motion.div>
                         <motion.div {...buttonAnim}>
-                            <Link href="/about" style={{ display: 'block' }}>About</Link>
+                            <Link to="/about" style={{ display: 'block' }}>About</Link>
                         </motion.div>
                     </div>
                 </div>

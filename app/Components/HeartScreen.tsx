@@ -1,8 +1,6 @@
-"use client";
 import React, { useEffect, useState } from 'react';
 import { motion, Transition, useAnimation } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { Link, useNavigate } from 'react-router-dom';
 import './HeartScreen.css';
 
 const HEART_PATH = "M16 27.5C16 27.5 3 18.5 3 10C3 5.5 7 2.5 11 2.5C14 2.5 15.5 4.5 16 6C16.5 4.5 18 2.5 21 2.5C25 2.5 29 5.5 29 10C29 18.5 16 27.5 16 27.5Z";
@@ -89,7 +87,7 @@ const HeartSvg = ({ size, strokeWidth = 2, gradientStops, strokeColor, shadowCol
 );
 
 const HeartScreen: React.FC = () => {
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const [visibleText, setVisibleText] = useState("");
     const [isTypingComplete, setIsTypingComplete] = useState(false);
@@ -162,17 +160,17 @@ const HeartScreen: React.FC = () => {
             <nav className="top-nav">
                 <div className="nav-left">
                     <motion.div {...buttonAnim}>
-                        <Link href="/" style={{ display: 'block' }}>Home</Link>
+                        <Link to="/" style={{ display: 'block' }}>Home</Link>
                     </motion.div>
                     <motion.div {...buttonAnim}>
-                        <Link href="/about" style={{ display: 'block' }}>About</Link>
+                        <Link to="/about" style={{ display: 'block' }}>About</Link>
                     </motion.div>
                 </div>
                 <div className="nav-center">
                     <h1>Clementine</h1>
                 </div>
                 <div className="nav-right">
-                    <motion.button className="sign-in-btn" onClick={() => router.push('/transition')} {...buttonAnim}>Sign In</motion.button>
+                    <motion.button className="sign-in-btn" onClick={() => navigate('/transition')} {...buttonAnim}>Sign In</motion.button>
                 </div>
             </nav>
 
@@ -192,8 +190,8 @@ const HeartScreen: React.FC = () => {
                             Clementine monitors your body and location in real time. When it detects a high-risk moment of a relapse, it reaches out to the people who care about you — before you have to ask.
                         </p>
                         <div className="button-group">
-                            <motion.button className="btn-primary" onClick={() => router.push('/transition')} {...buttonAnim}>Get Started</motion.button>
-                            <motion.button className="btn-secondary" onClick={() => router.push('/about')} {...buttonAnim}>Learn More</motion.button>
+                            <motion.button className="btn-primary" onClick={() => navigate('/transition')} {...buttonAnim}>Get Started</motion.button>
+                            <motion.button className="btn-secondary" onClick={() => navigate('/about')} {...buttonAnim}>Learn More</motion.button>
                         </div>
                     </div>
                 </motion.div>

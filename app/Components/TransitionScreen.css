@@ -1,0 +1,81 @@
+.transition-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(180deg, #1A1A1A 0%, #4A0024 100%);
+    color: #FFFFFF;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.transition-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.transition-logo {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin: 0 0 40px 0;
+}
+
+.transition-hearts-container {
+    position: relative;
+    width: 420px;
+    height: 420px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.heart-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.heart-large {
+    z-index: 1;
+}
+
+.heart-medium {
+    z-index: 2;
+}
+
+.heart-small {
+    z-index: 3;
+}
+
+.transition-text-container {
+    margin-bottom: 16px;
+}
+
+.transition-text {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
+}
+
+.transition-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: #F8BBD9;
+    border-radius: 50%;
+}
