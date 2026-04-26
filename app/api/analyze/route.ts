@@ -2,24 +2,13 @@ import { NextResponse } from "next/server";
 import { getNearbyTriggerLocations } from "@/lib/geo";
 import { analyzeRisk } from "@/lib/claude";
 import { sendSMS } from "@/lib/vonage";
-import { saveReading, getRecentReadings, getUser } from "@/lib/db";
 
 export async function POST(req: Request) {
   const { heartRate, baseline, lat, lng } = await req.json();
-  const userId = process.env.USER_ID!;
 
-  // Step 1: save reading to database
-  await saveReading(userId, heartRate, lat, lng);
-
-  // Step 2: get last 4 readings and check for spike
-  const readings = await getRecentReadings(userId);
-  const oldest = readings[readings.length - 1]?.heart_rate ?? baseline;
-  const newest = readings[0]?.heart_rate ?? heartRate;
-  const spikeDetected = (newest - oldest) >= 20;
-
-  // Step 3: quick risk check
+  // Step 1: quick risk check, no API calls
   const percentAbove = ((heartRate - baseline) / baseline) * 100;
-  if (percentAbove < 20 && !spikeDetected) {
+  if (percentAbove < 20) {
     return NextResponse.json({
       risk: "low",
       userMessage: "Your vitals look normal. Keep it up.",
@@ -27,20 +16,14 @@ export async function POST(req: Request) {
     });
   }
 
-  // Step 4: elevated, check location
+  // Step 2:elevated, now check location
   const nearbyPlaces = await getNearbyTriggerLocations(lat, lng, 200);
 
-  // Step 5: get real user + sponsor info from db
-  const user = await getUser(userId);
-
-  // Step 6: build context for Claude
+  // Step 3: build context object for Claude
   const context = {
     heartRate,
     baseline,
     percentAboveBaseline: Math.round(percentAbove),
-    spikeDetected,
-    userName: user?.name ?? "the user",
-    sponsorName: user?.sponsor_name ?? "their sponsor",
     nearbyPlaces: nearbyPlaces.map(p => ({
       name: p.name,
       distanceMeters: p.distanceMeters,
@@ -49,21 +32,24 @@ export async function POST(req: Request) {
     timestamp: new Date().toISOString(),
   };
 
-  // Step 7: Claude reasons about everything
+  //Step 4: claude reasons about everything and returns structured response
   const analysis = await analyzeRisk(context);
-  console.log("Claude response:", analysis);
+  
 
-  // Step 8: if high risk, send SMS to real sponsor phone
+  // Step 5: if high risk, send WhatsApp via Vonage sandbox
   if (analysis.riskLevel === "high" || analysis.riskLevel === "critical") {
-    if (user?.sponsor_phone) {
-      await sendSMS(user.sponsor_phone, analysis.sponsorMessage);
-    }
-    if (user?.phone) {
-      await sendSMS(user.phone, analysis.userMessage);
+    try {
+      const smsResponse = await sendSMS(
+        process.env.SPONSOR_PHONE_NUMBER!, // set in .env
+        analysis.sponsorMessage
+      );
+      console.log("Vonage WhatsApp sent:", smsResponse);
+    } catch (error) {
+      console.error("Failed to send WhatsApp:", error);
     }
   }
 
-  // Step 9: return to frontend
+  // Step 6: send results back to frontend
   return NextResponse.json({
     risk: analysis.riskLevel,
     userMessage: analysis.userMessage,
