@@ -18,7 +18,10 @@ export default function Home() {
         body: JSON.stringify({ heartRate: 110, baseline: 70, lat, lng }),
       });
 
-      const result = await res.json()
+      const text = await res.text(); // read as text first
+      console.log("Raw response:", text); // check browser console
+      const result = JSON.parse(text); // then parse
+
       setMessage(result.userMessage);
       setSMessage(result.sponsorMessage);
       setRisk(result.risk ?? result.riskLevel);
