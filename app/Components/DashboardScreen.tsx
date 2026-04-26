@@ -6,6 +6,7 @@ import './DashboardScreen.css';
 
 const DashboardScreen: React.FC = () => {
     const [alertMessage, setAlertMessage] = useState("");
+    const [nearTrigger, setNearTrigger] = useState(false);
 
     const [displayHeartRate, setDisplayHeartRate] = useState<number | null>(null);
     const baseHRRef = useRef<number>(0);
@@ -97,6 +98,9 @@ const DashboardScreen: React.FC = () => {
             });
             const result = await res.json();
             setAlertMessage(result.userMessage);
+            if (result.risk === "high" || result.risk === "critical") {
+                setNearTrigger(true);
+            }
             });
 
             const startHR = currentHRRef.current;
@@ -292,16 +296,20 @@ const DashboardScreen: React.FC = () => {
                     <div className="divider"></div>
 
                     <span className="panel-label">LOCATION STATUS</span>
-                    <div className="location-card">
-                        <svg className="location-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                            <circle cx="12" cy="10" r="3"></circle>
-                        </svg>
-                        <div className="location-info">
-                            <span className="location-title">Safe Zone</span>
-                            <span className="location-subtitle">No trigger locations nearby</span>
-                        </div>
+                    <div className={`location-card ${nearTrigger ? 'location-card-risk' : ''}`}>
+                    <svg className="location-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <div className="location-info">
+                        <span className="location-title">
+                            {nearTrigger ? '⚠️ Trigger Location Nearby' : 'Safe Zone'}
+                        </span>
+                        <span className="location-subtitle">
+                            {nearTrigger ? 'High risk area detected' : 'No trigger locations nearby'}
+                        </span>
                     </div>
+                </div>
 
                     <div className="divider"></div>
 
