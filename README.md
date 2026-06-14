@@ -184,27 +184,5 @@ npm run dev
 
 Open `http://localhost:5173`, click Get Started, complete Fitbit auth, and the dashboard will load with your live biometric data.
 
----
-
-## The Team
-
-Built in 10 hours at NJIT by:
-
-- **Prateek Wali** — [Add teammates here]
-
----
-
-## Acknowledgements
-
-Thank you to **Anthropic** for hosting and for building Claude — the reasoning layer that makes Clementine feel human rather than automated. Thank you to **NJIT** and the **Claude Builder Club** for creating a space where students can build things that matter. And thank you to everyone in addiction recovery who deserves better tools than what currently exists.
-
----
-
-## License
-
-MIT
-
----
-
 *Built with care at the NJIT Claude Builder Club Hackathon · April 2025*
 *🏆 First Place — Health & Wellbeing Track*
